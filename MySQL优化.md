@@ -18,7 +18,7 @@ CPU在饱和的时候一般发生在**数据装入内存或从磁盘上读取数
 
 2.2 适当添加索引(主键索引，唯一索引，普通索引(包括联合索引)，全文索引)
 
-#### 3NF
+#### 3NF(三大范式)
 
 1. 第一范式
 
@@ -163,13 +163,25 @@ String tableName= "order_info_" + idxStr;
 
 在某些表中，可能会有占用空间比较大得字段，类型如text，varchar(3000)，用于存储文章内容，回帖内容等，这些字段会严重影响系统的检索速度，此类字段查询的次数也相对较少，这个时候可以将其提取出来，单独建表存储，与原来的表共用主键id。这样在保证了数据的关联一致的同时，加快了原来表的检索速度。
 
+
+
 3. 数据库中文本视频类数据的存储
 
-通常不直接将文本或视频内容存储在数据库中，而只是存储文本或视频所在的路径，查询时按照路径去检索文件的真正内容。
+通常不直接将文本或视频内容存储在数据库中，而只是存储文本或视频所在的路径，查询时按照路径去检索文件的真正内容。(比如微信小程序项目，里边的音源，照片等)
+
+
 
 ### 优化原则
 
 - 查询时，能不用**就不用*，尽量写全字段名
+
+  mybatis中逆向工程里边，生成的tbMusicMapper.xml中。
+
+  ```
+  <sql id="Base_Column_List"> music_id, music_name, music_album_name, music_album_pic_url, music_mp3_url, music_artist_name, sheet_id </sql>
+  ```
+
+  整个文件里边，没有一个*号
 
   ```mysql
   select * from user;
@@ -177,7 +189,7 @@ String tableName= "order_info_" + idxStr;
   select id,name from user;
   ```
 
-- 大部分情况连接效率远大于子查询
+- 大部分情况连接(内连接inner join 左连接 Left，右连接 right)效率远大于子查询
 
   ```mysql
   内连接
